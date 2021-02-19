@@ -15,9 +15,9 @@ public class ReentrantLockTest {
     public static void main(String[] args) {
         int size = 10;
         //非公平锁
-        boolean fair = false;
+        ReentrantLock reentrantLock = new ReentrantLock();
         CyclicBarrier cyclicBarrier = new CyclicBarrier(size);
-        MyThread myThread = new MyThread(cyclicBarrier, fair);
+        MyThread myThread = new MyThread(cyclicBarrier, reentrantLock);
         for (int i = 0; i < size; i++) {
             new Thread(myThread, "t" + i).start();
         }
@@ -28,9 +28,9 @@ class MyThread implements Runnable {
     ReentrantLock lock;
     CyclicBarrier cyclicBarrier;
 
-    public MyThread(CyclicBarrier cyclicBarrier, boolean fair) {
+    public MyThread(CyclicBarrier cyclicBarrier, ReentrantLock lock) {
         this.cyclicBarrier = cyclicBarrier;
-        lock = new ReentrantLock(fair);
+        this.lock = lock;
 
     }
 
