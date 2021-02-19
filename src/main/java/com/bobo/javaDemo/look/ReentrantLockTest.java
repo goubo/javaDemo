@@ -1,5 +1,7 @@
 package com.bobo.javaDemo.look;
 
+import cn.hutool.core.thread.ThreadUtil;
+
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,13 +15,14 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class ReentrantLockTest {
     public static void main(String[] args) {
-        int size = 10;
+        int size = 60;
         //非公平锁
         ReentrantLock reentrantLock = new ReentrantLock();
         CyclicBarrier cyclicBarrier = new CyclicBarrier(size);
         MyThread myThread = new MyThread(cyclicBarrier, reentrantLock);
+
         for (int i = 0; i < size; i++) {
-            new Thread(myThread, "t" + i).start();
+            ThreadUtil.execute(new Thread(myThread, "t" + i));
         }
     }
 }
@@ -38,11 +41,12 @@ class MyThread implements Runnable {
     public void run() {
         try {
             Thread.sleep(1000);
+            System.out.println(Thread.currentThread().getName() + ":准备抢锁锁");
             cyclicBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-        System.out.println(Thread.currentThread().getName() + ":准备抢锁锁");
+
         lock.lock();
         try {
             System.out.print(Thread.currentThread().getName() + ":抢到了锁");
